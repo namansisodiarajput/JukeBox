@@ -1,9 +1,13 @@
 package com.jukebox.application.serviceimpl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.jukebox.application.Constants.ErrorMessages;
 import com.jukebox.application.dto.MusicAlbumAddDto;
 import com.jukebox.application.dto.MusicianAddDto;
 import com.jukebox.application.exceptions.BadRequestException;
@@ -36,7 +40,7 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 			
 			musician = musiciansRepo.findById(musicianId);
 			if(musician == null) {
-				throw new BadRequestException("Musican Id is Wrong");
+				throw new BadRequestException(ErrorMessages.MUSICIAN_ID_INVALID);
 			}
 			
 		} else {
@@ -48,7 +52,6 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 		musiciansRepo.save(musician);
 	}
 	
-	
 	@Override 
 	public void addOrUpdateMusicAlbum(Integer musicAlbumId, MusicAlbumAddDto addAlbumDto) {
 		
@@ -57,7 +60,7 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 		if(musicAlbumId != null) {
 			musicAlbum = musicAlbumRepo.findById(musicAlbumId);
 			if(musicAlbum == null) {
-				throw new BadRequestException("Music Albums Id is Wrong");
+				throw new BadRequestException(ErrorMessages.MUSIC_ALBUM_ID_INVALID);
 			}
 		} else {
 			musicAlbum.setName(addAlbumDto.getName());
@@ -74,19 +77,50 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 		addMusicianToAlbum(musicAlbum.getId(), addAlbumDto.getMusiciansId());
 	}
 	
+	@Override 
+	public List<MusicAlbums> getAllMusicAlbum() {
+		
+		List<MusicAlbums> musicAlbumList = musicAlbumRepo.findAll();
+		
+		//Sort by Date of Release 
+        Comparator<MusicAlbums> compareByDateRelease = (MusicAlbums album1, MusicAlbums album2) -> 
+        album1.getDateOfRelease().compareTo(album2.getDateOfRelease());  
+        Collections.sort(musicAlbumList,  compareByDateRelease);
+        
+        return musicAlbumList;
+	}
+	
+	@Override 
+	public List<MusicAlbums> findMusicAlbumByMusician(Integer musicianId) {
+		
+		List<Integer> musicAlbumIdList = musicianMappedAlbumRepo.findAlbumByMusician(musicianId);
+		
+		// Find all music album, Sort by Price
+		return musicAlbumRepo.findMusicAlbumsById(musicAlbumIdList);
+   	}
+	
+	@Override 
+	public List<Musicians> findMusicianByMusicAlbum(Integer musicAlbumId) {
+		
+		List<Integer> muscianIdList = musicianMappedAlbumRepo.findMusicianByAlbum(musicAlbumId);
+		
+		// Find all Musician, Sort by Musician Name
+		return musiciansRepo.findMusicianById(muscianIdList);
+   	}
+	
 	// save all the List of musicians associated to single album
 	private void addMusicianToAlbum(Long albumId, List<Integer> musicianIdList) {
 			
 		MusicAlbums musicAlbum = musicAlbumRepo.findById(albumId.intValue());
 		if(musicAlbum == null) {
-			throw new BadRequestException("Music Albums Id is Wrong");
+			throw new BadRequestException(ErrorMessages.MUSIC_ALBUM_ID_INVALID);
 		}
 		
 		for(Integer musicianId: musicianIdList) {
 			
 			Musicians musician = musiciansRepo.findById(musicianId);
 			if(musician == null) {
-				throw new BadRequestException("Musican Id is Wrong");
+				throw new BadRequestException(ErrorMessages.MUSICIAN_ID_INVALID);
 			}
 			
 			MusicianMappedAlbums musicianMappedAlbum = new MusicianMappedAlbums();
