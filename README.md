@@ -219,6 +219,7 @@
 ## Get All Musical Album Filter By Musician Sorted By Price Get Api - http://localhost:8080/jukebox/music-album/{musician-id}/musician
 ![image](https://user-images.githubusercontent.com/19189211/107152426-c4eb6b00-698d-11eb-874c-3adad5a7801d.png)
 ### Response Json
+```json
 [
     {
         "musicAlbum": {
@@ -381,10 +382,12 @@
         ]
     }
 ]
+```
 
 ## Get All Musicians Filter By Music Album Sorted By Name Get Api - http://localhost:8080/jukebox/musician/{album-id}/music-album
 ![image](https://user-images.githubusercontent.com/19189211/107152495-46db9400-698e-11eb-93cb-2db971d27cfe.png)
 ### Response -
+```json
 [
     {
         "id": 2,
@@ -407,6 +410,7 @@
         "musicianType": "INSTRUMENTALIST"
     }
 ]
+```
 
 
 ## Naman Sisodia - Software Craftsman
