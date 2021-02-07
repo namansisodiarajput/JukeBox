@@ -18,6 +18,7 @@
 ## Get All Musical Album Sorted By Release Date Get Api - http://localhost:8080/jukebox/music-album
 ![image](https://user-images.githubusercontent.com/19189211/107152319-48f12300-698d-11eb-8fab-1929dbca2747.png)
 ### response json - 
+```json
 [
     {
         "musicAlbum": {
@@ -213,6 +214,7 @@
         ]
     }
 ]
+```
 
 ## Get All Musical Album Filter By Musician Sorted By Price Get Api - http://localhost:8080/jukebox/music-album/{musician-id}/musician
 ![image](https://user-images.githubusercontent.com/19189211/107152426-c4eb6b00-698d-11eb-874c-3adad5a7801d.png)
