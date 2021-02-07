@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.jukebox.application.dto.MusicAlbumAddDto;
+import com.jukebox.application.dto.MusicAlbumResponseDto;
 import com.jukebox.application.dto.MusicianAddDto;
 import com.jukebox.application.models.MusicAlbums;
 import com.jukebox.application.models.Musicians;
@@ -37,13 +38,13 @@ public class JukeBoxController {
     }
 	
 	@GetMapping("/music-album")
-    public List<MusicAlbums> getAllMusicAlbum() {
+    public List<MusicAlbumResponseDto> getAllMusicAlbum() {
      	 
 		return jukeBoxService.getAllMusicAlbum();
     }
 	
 	@GetMapping("/music-album/{musician-id}/musician")
-    public List<MusicAlbums> getAllMusicAlbumByMusician(@PathVariable(name = "musician-id" , required = true) Integer musicianId) {
+    public List<MusicAlbumResponseDto> getAllMusicAlbumByMusician(@PathVariable(name = "musician-id" , required = true) Integer musicianId) {
      	 
 		return jukeBoxService.findMusicAlbumByMusician(musicianId);
     }

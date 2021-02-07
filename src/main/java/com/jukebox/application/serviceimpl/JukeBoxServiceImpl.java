@@ -1,5 +1,6 @@
 package com.jukebox.application.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.jukebox.application.constants.ErrorMessages;
 import com.jukebox.application.dto.MusicAlbumAddDto;
+import com.jukebox.application.dto.MusicAlbumResponseDto;
 import com.jukebox.application.dto.MusicianAddDto;
 import com.jukebox.application.exceptions.BadRequestException;
 import com.jukebox.application.models.MusicAlbums;
@@ -80,7 +82,7 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 	}
 	
 	@Override 
-	public List<MusicAlbums> getAllMusicAlbum() {
+	public List<MusicAlbumResponseDto> getAllMusicAlbum() {
 		
 		List<MusicAlbums> musicAlbumList = musicAlbumRepo.findAll();
 		
@@ -89,16 +91,17 @@ public class JukeBoxServiceImpl implements JukeBoxService {
         album1.getDateOfRelease().compareTo(album2.getDateOfRelease());  
         Collections.sort(musicAlbumList,  compareByDateRelease);
         
-        return musicAlbumList;
+        
+        return findAllMusicianOfAlbum(musicAlbumList);
 	}
 	
 	@Override 
-	public List<MusicAlbums> findMusicAlbumByMusician(Integer musicianId) {
+	public List<MusicAlbumResponseDto> findMusicAlbumByMusician(Integer musicianId) {
 		
 		List<Integer> musicAlbumIdList = musicianMappedAlbumRepo.findAlbumByMusician(musicianId);
 		
 		// Find all music album, Sort by Price
-		return musicAlbumRepo.findMusicAlbumsById(musicAlbumIdList);
+		return findAllMusicianOfAlbum(musicAlbumRepo.findMusicAlbumsById(musicAlbumIdList));
    	}
 	
 	@Override 
@@ -136,6 +139,23 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 			}
 		}
 		
+	}
+	
+	//Get all musician of album
+	private List<MusicAlbumResponseDto> findAllMusicianOfAlbum(List<MusicAlbums> musicAlbumList) {
+		
+		List<MusicAlbumResponseDto> response = new ArrayList<>();
+		
+		for(MusicAlbums musicAlbum : musicAlbumList) {
+			
+			MusicAlbumResponseDto musicAlbumAndMusician = new MusicAlbumResponseDto();
+			musicAlbumAndMusician.setMusicAlbum(musicAlbum);
+			List<Musicians> musicianList =  findMusicianByMusicAlbum(musicAlbum.getId());
+			musicAlbumAndMusician.setMusiciansList(musicianList);
+			
+			response.add(musicAlbumAndMusician);
+		}
+		return response;
 	}
 
 }
