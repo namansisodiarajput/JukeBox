@@ -14,7 +14,7 @@ public class Musicians {
 	
 	@Id
 	@GeneratedValue
-	private Long id;
+	private Integer id;
 	
 	@Column(name = "name")
 	private String name;

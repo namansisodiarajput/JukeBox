@@ -14,7 +14,7 @@ public class MusicianMappedAlbums {
 	
 	@Id
 	@GeneratedValue
-	private Long id;
+	private Integer id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "musician_id", nullable = false)

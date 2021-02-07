@@ -38,7 +38,7 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 		//create or update musician
 		if(musicianId != null) {
 			
-			musician = musiciansRepo.findById(musicianId);
+			musician = musiciansRepo.findByMusicianId(musicianId);
 			if(musician == null) {
 				throw new BadRequestException(ErrorMessages.MUSICIAN_ID_INVALID);
 			}
@@ -47,7 +47,7 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 			musician = new Musicians();
 			musician.setName(addMusicianDto.getName());
 		}	
-	
+		
 		musician.setMusicianType(addMusicianDto.getMusicianType());
 		musiciansRepo.save(musician);
 	}
@@ -58,7 +58,7 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 		//add or update music album
 		MusicAlbums musicAlbum = new MusicAlbums();
 		if(musicAlbumId != null) {
-			musicAlbum = musicAlbumRepo.findById(musicAlbumId);
+			musicAlbum = musicAlbumRepo.findByMusicAlbumId(musicAlbumId);
 			if(musicAlbum == null) {
 				throw new BadRequestException(ErrorMessages.MUSIC_ALBUM_ID_INVALID);
 			}
@@ -74,7 +74,9 @@ public class JukeBoxServiceImpl implements JukeBoxService {
 		musicAlbum = musicAlbumRepo.save(musicAlbum);
 		
 		//add all musicans to album
-		addMusicianToAlbum(musicAlbum.getId(), addAlbumDto.getMusiciansId());
+		if(addAlbumDto.getMusiciansId() != null && addAlbumDto.getMusiciansId().size() > 0) {
+			addMusicianToAlbum(musicAlbum.getId(), addAlbumDto.getMusiciansId());
+		}
 	}
 	
 	@Override 
@@ -109,24 +111,29 @@ public class JukeBoxServiceImpl implements JukeBoxService {
    	}
 	
 	// save all the List of musicians associated to single album
-	private void addMusicianToAlbum(Long albumId, List<Integer> musicianIdList) {
+	private void addMusicianToAlbum(Integer albumId, List<Integer> musicianIdList) {
 			
-		MusicAlbums musicAlbum = musicAlbumRepo.findById(albumId.intValue());
+		MusicAlbums musicAlbum = musicAlbumRepo.findByMusicAlbumId(albumId);
 		if(musicAlbum == null) {
 			throw new BadRequestException(ErrorMessages.MUSIC_ALBUM_ID_INVALID);
 		}
 		
 		for(Integer musicianId: musicianIdList) {
 			
-			Musicians musician = musiciansRepo.findById(musicianId);
+			Musicians musician = musiciansRepo.findByMusicianId(musicianId);
 			if(musician == null) {
 				throw new BadRequestException(ErrorMessages.MUSICIAN_ID_INVALID);
 			}
+						
+			//if mapping already exist dont add
+			MusicianMappedAlbums musicianMappedAlbum = musicianMappedAlbumRepo.findByMusicianAndAlbum(musician.getId(), musicAlbum.getId());
 			
-			MusicianMappedAlbums musicianMappedAlbum = new MusicianMappedAlbums();
-			musicianMappedAlbum.setMusician(musician);
-			musicianMappedAlbum.setAlbum(musicAlbum);
-			musicianMappedAlbumRepo.save(musicianMappedAlbum);
+			if(musicianMappedAlbum == null) {
+				musicianMappedAlbum = new MusicianMappedAlbums();
+				musicianMappedAlbum.setMusician(musician);
+				musicianMappedAlbum.setAlbum(musicAlbum);
+				musicianMappedAlbumRepo.save(musicianMappedAlbum);
+			}
 		}
 		
 	}
