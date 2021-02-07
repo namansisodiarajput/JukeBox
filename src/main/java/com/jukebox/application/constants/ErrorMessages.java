@@ -1,4 +1,4 @@
-package com.jukebox.application.Constants;
+package com.jukebox.application.constants;
 
 public class ErrorMessages {
 	private ErrorMessages() {}
