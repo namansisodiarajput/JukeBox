@@ -18,9 +18,9 @@ public class MusicianMappedAlbums {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "musician_id", nullable = false)
-	private Musicians musicianId;
+	private Musicians musician;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "album_id", nullable = false)
-	private MusicAlbums albumId;
+	private MusicAlbums album;
 }
